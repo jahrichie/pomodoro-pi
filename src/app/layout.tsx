@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Pomodoro Pi",
+  title: "Pomodoro Timer",
   description: "Touchscreen Pomodoro Timer for Raspberry Pi",
 };
 
