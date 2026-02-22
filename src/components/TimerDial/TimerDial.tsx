@@ -19,6 +19,7 @@ export const TimerDial: React.FC<TimerDialProps> = ({
 }) => {
     const svgRef = useRef<SVGSVGElement>(null);
     const [isDragging, setIsDragging] = useState(false);
+    const [, setDragTick] = useState(0);
     const lastAngleRef = useRef<number | null>(null);
     const totalRotationRef = useRef<number>(0);
 
@@ -39,27 +40,49 @@ export const TimerDial: React.FC<TimerDialProps> = ({
         }
     }, [timeLeft, isDragging]);
 
-    // Visual progress is modulo 60 minutes
-    const visualProgress = (timeLeft % 3600) / 3600;
+    const effectiveAngle = isDragging
+        ? ((totalRotationRef.current % 360) + 360) % 360
+        : ((timeLeft % 3600) / 3600) * 360;
+    const visualProgress = effectiveAngle / 360;
     const strokeDashoffset = circumference - visualProgress * circumference;
 
-    // Knob position based on visual progress
-    const angle = visualProgress * 360;
+    const getAngleFromPointer = useCallback((clientX: number, clientY: number): number => {
+        const svg = svgRef.current;
+        if (!svg) return 0;
+
+        const pt = svg.createSVGPoint();
+        pt.x = clientX;
+        pt.y = clientY;
+        const ctm = svg.getScreenCTM();
+        if (!ctm) {
+            const rect = svg.getBoundingClientRect();
+            const x = clientX - rect.left - rect.width / 2;
+            const y = clientY - rect.top - rect.height / 2;
+            let d = Math.atan2(y, x) * (180 / Math.PI) + 90;
+            return d < 0 ? d + 360 : d;
+        }
+        const svgPt = pt.matrixTransform(ctm.inverse());
+        const x = svgPt.x - center;
+        const y = svgPt.y - center;
+        let d = Math.atan2(y, x) * (180 / Math.PI) + 90;
+        return d < 0 ? d + 360 : d;
+    }, [center]);
 
     const handleInteraction = useCallback((clientX: number, clientY: number, isStart: boolean = false) => {
         if (!svgRef.current || !isInteractive) return;
 
-        const rect = svgRef.current.getBoundingClientRect();
-        const x = clientX - rect.left - center;
-        const y = clientY - rect.top - center;
-
-        // Calculate current angle in degrees (0 at top, clockwise)
-        let theta = Math.atan2(y, x);
-        let degrees = theta * (180 / Math.PI) + 90;
-        if (degrees < 0) degrees += 360;
+        const degrees = getAngleFromPointer(clientX, clientY);
 
         if (isStart) {
+            const prevAngle = ((totalRotationRef.current % 360) + 360) % 360;
+            let angleDiff = degrees - prevAngle;
+            if (angleDiff > 180) angleDiff -= 360;
+            if (angleDiff < -180) angleDiff += 360;
+            totalRotationRef.current = Math.max(0, totalRotationRef.current + angleDiff);
             lastAngleRef.current = degrees;
+            const rawSeconds = totalRotationRef.current * 10;
+            const snappedSeconds = Math.round(rawSeconds / 60) * 60;
+            onSetTime(snappedSeconds);
             return;
         }
 
@@ -88,62 +111,49 @@ export const TimerDial: React.FC<TimerDialProps> = ({
 
             onSetTime(snappedSeconds);
             lastAngleRef.current = degrees;
+            setDragTick((t) => t + 1);
         }
-    }, [center, isInteractive, onSetTime]);
+    }, [isInteractive, onSetTime, getAngleFromPointer]);
 
-    const onMouseDown = (e: React.MouseEvent) => {
+    const onPointerDown = (e: React.MouseEvent | React.TouchEvent) => {
         if (!isInteractive) return;
+        const x = 'touches' in e ? e.touches[0].clientX : e.clientX;
+        const y = 'touches' in e ? e.touches[0].clientY : e.clientY;
         setIsDragging(true);
-        handleInteraction(e.clientX, e.clientY, true);
+        handleInteraction(x, y, true);
     };
 
-    const onMouseMove = (e: React.MouseEvent) => {
-        if (!isDragging) return;
-        handleInteraction(e.clientX, e.clientY);
-    };
-
-    const onMouseUp = () => {
-        setIsDragging(false);
-        lastAngleRef.current = null;
-    };
-
-    const onTouchStart = (e: React.TouchEvent) => {
-        if (!isInteractive) return;
-        setIsDragging(true);
-        handleInteraction(e.touches[0].clientX, e.touches[0].clientY, true);
-    };
-
-    const onTouchMove = (e: React.TouchEvent) => {
-        if (!isDragging) return;
-        handleInteraction(e.touches[0].clientX, e.touches[0].clientY);
-    };
-
-    const onTouchEnd = () => {
-        setIsDragging(false);
-        lastAngleRef.current = null;
-    };
-
-    // Global mouse up to catch release outside
     useEffect(() => {
-        const handleGlobalMouseUp = () => {
+        if (!isDragging) return;
+        const onMove = (e: MouseEvent | TouchEvent) => {
+            const x = 'touches' in e ? e.touches[0].clientX : e.clientX;
+            const y = 'touches' in e ? e.touches[0].clientY : e.clientY;
+            handleInteraction(x, y);
+        };
+        const onEnd = () => {
             setIsDragging(false);
             lastAngleRef.current = null;
         };
-        window.addEventListener('mouseup', handleGlobalMouseUp);
-        return () => window.removeEventListener('mouseup', handleGlobalMouseUp);
-    }, []);
+        window.addEventListener('mousemove', onMove);
+        window.addEventListener('mouseup', onEnd);
+        window.addEventListener('touchmove', onMove, { passive: false });
+        window.addEventListener('touchend', onEnd);
+        return () => {
+            window.removeEventListener('mousemove', onMove);
+            window.removeEventListener('mouseup', onEnd);
+            window.removeEventListener('touchmove', onMove);
+            window.removeEventListener('touchend', onEnd);
+        };
+    }, [isDragging, handleInteraction]);
 
     return (
         <div className={styles.container}>
             <svg
                 ref={svgRef}
                 className={styles.svg}
-                onMouseDown={onMouseDown}
-                onMouseMove={onMouseMove}
-                onMouseUp={onMouseUp}
-                onTouchStart={onTouchStart}
-                onTouchMove={onTouchMove}
-                onTouchEnd={onTouchEnd}
+                viewBox={`0 0 ${size} ${size}`}
+                onMouseDown={onPointerDown}
+                onTouchStart={onPointerDown}
             >
                 {/* Background Track */}
                 <circle
@@ -167,9 +177,9 @@ export const TimerDial: React.FC<TimerDialProps> = ({
                 {isInteractive && (
                     <circle
                         className={styles.knob}
-                        cx={center + radius * Math.cos(angle * (Math.PI / 180))}
-                        cy={center + radius * Math.sin(angle * (Math.PI / 180))}
-                        r={12}
+                        cx={center + radius * Math.cos(effectiveAngle * (Math.PI / 180))}
+                        cy={center + radius * Math.sin(effectiveAngle * (Math.PI / 180))}
+                        r={isDragging ? 14 : 12}
                     />
                 )}
             </svg>
