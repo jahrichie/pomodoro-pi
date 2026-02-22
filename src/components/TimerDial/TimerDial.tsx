@@ -64,7 +64,7 @@ export const TimerDial: React.FC<TimerDialProps> = ({
         const svgPt = pt.matrixTransform(ctm.inverse());
         const x = svgPt.x - center;
         const y = svgPt.y - center;
-        let d = Math.atan2(y, x) * (180 / Math.PI) + 90;
+        let d = Math.atan2(y, x) * (180 / Math.PI);
         return d < 0 ? d + 360 : d;
     }, [center]);
 
