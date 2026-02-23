@@ -2,7 +2,7 @@
 
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import styles from './TimerDial.module.css';
-import { formatTime } from '@/utils/time';
+import { formatMinutes } from '@/utils/time';
 
 interface TimerDialProps {
     timeLeft: number;
@@ -194,7 +194,7 @@ export const TimerDial: React.FC<TimerDialProps> = ({
             </svg>
 
             <div className={styles.timeDisplay}>
-                <div className={styles.timeText}>{formatTime(timeLeft)}</div>
+                <div className={styles.timeText}>{formatMinutes(timeLeft)}</div>
                 <div className={styles.label}>{isDragging ? 'SET TIME' : (timeLeft > 0 ? 'REMAINING' : 'DONE')}</div>
             </div>
         </div>

@@ -5,7 +5,7 @@ import { X, Calendar } from 'lucide-react';
 import clsx from 'clsx';
 import styles from './TaskList.module.css';
 import type { Task } from '@/hooks/useTaskList';
-import { formatTime } from '@/utils/time';
+import { formatMinutes } from '@/utils/time';
 
 interface TaskListProps {
     tasks: Task[];
@@ -75,7 +75,7 @@ export const TaskList: React.FC<TaskListProps> = ({
                             <div className={styles.taskInfo}>
                                 <div className={styles.taskName}>{task.name}</div>
                                 <div className={styles.taskDuration}>
-                                    {formatTime(task.duration)}
+                                    {formatMinutes(task.duration)}
                                 </div>
                             </div>
                             <button
@@ -102,7 +102,7 @@ export const TaskList: React.FC<TaskListProps> = ({
                     onChange={(e) => setNewName(e.target.value)}
                 />
                 <button className={styles.addBtn} type="submit">
-                    Add ({formatTime(currentDuration)})
+                    Add ({formatMinutes(currentDuration)})
                 </button>
             </form>
 
