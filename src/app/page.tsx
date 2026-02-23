@@ -62,7 +62,7 @@ export default function Home() {
   return (
     <main className={styles.main}>
       <div className={styles.container}>
-        <h1 className={styles.title}>Pomodoro Pi</h1>
+        <h1 className={styles.title}>Pomodoro Focus</h1>
 
         <div className={styles.timerSection}>
           <div className={styles.dialWrapper}>
@@ -92,6 +92,7 @@ export default function Home() {
           <TaskList
             tasks={taskList.tasks}
             activeTaskId={taskList.activeTaskId}
+            currentDuration={duration}
             onSelect={handleSelectTask}
             onAdd={taskList.addTask}
             onRemove={taskList.removeTask}

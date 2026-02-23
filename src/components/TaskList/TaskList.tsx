@@ -10,6 +10,7 @@ import { formatTime } from '@/utils/time';
 interface TaskListProps {
     tasks: Task[];
     activeTaskId: string | null;
+    currentDuration: number;
     onSelect: (id: string) => void;
     onAdd: (name: string, duration: number) => void;
     onRemove: (id: string) => void;
@@ -20,6 +21,7 @@ interface TaskListProps {
 export const TaskList: React.FC<TaskListProps> = ({
     tasks,
     activeTaskId,
+    currentDuration,
     onSelect,
     onAdd,
     onRemove,
@@ -33,7 +35,7 @@ export const TaskList: React.FC<TaskListProps> = ({
         e.preventDefault();
         const trimmed = newName.trim();
         if (!trimmed) return;
-        onAdd(trimmed, 25 * 60);
+        onAdd(trimmed, currentDuration);
         setNewName('');
     };
 
@@ -100,7 +102,7 @@ export const TaskList: React.FC<TaskListProps> = ({
                     onChange={(e) => setNewName(e.target.value)}
                 />
                 <button className={styles.addBtn} type="submit">
-                    Add
+                    Add ({formatTime(currentDuration)})
                 </button>
             </form>
 
