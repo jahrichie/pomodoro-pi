@@ -50,23 +50,12 @@ export const TimerDial: React.FC<TimerDialProps> = ({
         const svg = svgRef.current;
         if (!svg) return 0;
 
-        const pt = svg.createSVGPoint();
-        pt.x = clientX;
-        pt.y = clientY;
-        const ctm = svg.getScreenCTM();
-        if (!ctm) {
-            const rect = svg.getBoundingClientRect();
-            const x = clientX - rect.left - rect.width / 2;
-            const y = clientY - rect.top - rect.height / 2;
-            let d = Math.atan2(y, x) * (180 / Math.PI) + 90;
-            return d < 0 ? d + 360 : d;
-        }
-        const svgPt = pt.matrixTransform(ctm.inverse());
-        const x = svgPt.x - center;
-        const y = svgPt.y - center;
-        let d = Math.atan2(y, x) * (180 / Math.PI);
+        const rect = svg.getBoundingClientRect();
+        const x = clientX - rect.left - rect.width / 2;
+        const y = clientY - rect.top - rect.height / 2;
+        let d = Math.atan2(y, x) * (180 / Math.PI) + 90;
         return d < 0 ? d + 360 : d;
-    }, [center]);
+    }, []);
 
     const handleInteraction = useCallback((clientX: number, clientY: number, isStart: boolean = false) => {
         if (!svgRef.current || !isInteractive) return;
@@ -115,36 +104,53 @@ export const TimerDial: React.FC<TimerDialProps> = ({
         }
     }, [isInteractive, onSetTime, getAngleFromPointer]);
 
+    const handleInteractionRef = useRef(handleInteraction);
+    handleInteractionRef.current = handleInteraction;
+
     const onPointerDown = (e: React.MouseEvent | React.TouchEvent) => {
         if (!isInteractive) return;
-        const x = 'touches' in e ? e.touches[0].clientX : e.clientX;
-        const y = 'touches' in e ? e.touches[0].clientY : e.clientY;
-        setIsDragging(true);
-        handleInteraction(x, y, true);
-    };
+        const isTouch = 'touches' in e;
+        if (isTouch) (e as React.TouchEvent).preventDefault();
+        const x = isTouch ? (e as React.TouchEvent).touches[0].clientX : (e as React.MouseEvent).clientX;
+        const y = isTouch ? (e as React.TouchEvent).touches[0].clientY : (e as React.MouseEvent).clientY;
+        const touchId = isTouch ? (e as React.TouchEvent).touches[0].identifier : null;
 
-    useEffect(() => {
-        if (!isDragging) return;
-        const onMove = (e: MouseEvent | TouchEvent) => {
-            const x = 'touches' in e ? e.touches[0].clientX : e.clientX;
-            const y = 'touches' in e ? e.touches[0].clientY : e.clientY;
-            handleInteraction(x, y);
+        setIsDragging(true);
+        handleInteractionRef.current(x, y, true);
+
+        const onMove = (moveEvent: MouseEvent | TouchEvent) => {
+            let moveX: number, moveY: number;
+            if ('touches' in moveEvent) {
+                moveEvent.preventDefault();
+                const touch = touchId !== null
+                    ? Array.from(moveEvent.touches).find((t) => t.identifier === touchId)
+                    : moveEvent.touches[0];
+                if (!touch) return;
+                moveX = touch.clientX;
+                moveY = touch.clientY;
+            } else {
+                moveX = moveEvent.clientX;
+                moveY = moveEvent.clientY;
+            }
+            handleInteractionRef.current(moveX, moveY);
         };
+
         const onEnd = () => {
-            setIsDragging(false);
-            lastAngleRef.current = null;
-        };
-        window.addEventListener('mousemove', onMove);
-        window.addEventListener('mouseup', onEnd);
-        window.addEventListener('touchmove', onMove, { passive: false });
-        window.addEventListener('touchend', onEnd);
-        return () => {
             window.removeEventListener('mousemove', onMove);
             window.removeEventListener('mouseup', onEnd);
             window.removeEventListener('touchmove', onMove);
             window.removeEventListener('touchend', onEnd);
+            window.removeEventListener('touchcancel', onEnd);
+            setIsDragging(false);
+            lastAngleRef.current = null;
         };
-    }, [isDragging, handleInteraction]);
+
+        window.addEventListener('mousemove', onMove);
+        window.addEventListener('mouseup', onEnd);
+        window.addEventListener('touchmove', onMove, { passive: false });
+        window.addEventListener('touchend', onEnd);
+        window.addEventListener('touchcancel', onEnd);
+    };
 
     return (
         <div className={styles.container}>
