@@ -3,9 +3,15 @@ import { getOAuth2Client } from '@/lib/google';
 
 export async function GET(request: NextRequest) {
   const code = request.nextUrl.searchParams.get('code');
+  const state = request.nextUrl.searchParams.get('state');
+  const storedState = request.cookies.get('oauth_state')?.value;
 
   if (!code) {
     return NextResponse.json({ error: 'Missing auth code' }, { status: 400 });
+  }
+
+  if (!state || state !== storedState) {
+    return NextResponse.json({ error: 'Invalid state parameter' }, { status: 403 });
   }
 
   try {
@@ -14,6 +20,8 @@ export async function GET(request: NextRequest) {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
 
     const response = NextResponse.redirect(`${baseUrl}/?import=1`);
+
+    response.cookies.delete('oauth_state');
 
     response.cookies.set('gcal_access_token', tokens.access_token || '', {
       httpOnly: true,
@@ -34,8 +42,7 @@ export async function GET(request: NextRequest) {
     }
 
     return response;
-  } catch (err) {
-    const message = err instanceof Error ? err.message : 'Token exchange failed';
-    return NextResponse.json({ error: message }, { status: 500 });
+  } catch {
+    return NextResponse.json({ error: 'Authentication failed' }, { status: 500 });
   }
 }

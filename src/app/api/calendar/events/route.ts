@@ -38,8 +38,7 @@ export async function GET(request: NextRequest) {
       }));
 
     return NextResponse.json({ events });
-  } catch (err) {
-    const message = err instanceof Error ? err.message : 'Failed to fetch events';
-    return NextResponse.json({ error: message }, { status: 500 });
+  } catch {
+    return NextResponse.json({ error: 'Failed to fetch calendar events' }, { status: 500 });
   }
 }
