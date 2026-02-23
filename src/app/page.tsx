@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
 import styles from './page.module.css';
 import { useTimer } from '@/hooks/useTimer';
 import { useTaskList } from '@/hooks/useTaskList';
@@ -101,6 +102,12 @@ export default function Home() {
           />
         </div>
       </div>
+
+      <footer className={styles.footer}>
+        <Link href="/privacy">Privacy Policy</Link>
+        <span className={styles.footerDot}>&middot;</span>
+        <Link href="/terms">Terms of Service</Link>
+      </footer>
 
       {showImportModal && (
         <ImportModal

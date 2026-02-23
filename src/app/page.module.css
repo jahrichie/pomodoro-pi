@@ -97,3 +97,23 @@
     max-width: 380px;
   }
 }
+
+.footer {
+  margin-top: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+}
+
+.footer a {
+  color: rgba(255, 255, 255, 0.4);
+  transition: color 0.15s;
+}
+.footer a:hover {
+  color: #fff;
+}
+
+.footerDot {
+  color: rgba(255, 255, 255, 0.25);
+}
