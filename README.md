@@ -1,36 +1,56 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Pomodoro Pi
+
+A touchscreen-optimized Pomodoro timer built with Next.js. Features a circular drag-to-set dial, a task list, and Google Calendar integration.
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Google Calendar Integration (optional)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Import today's calendar events as timer tasks.
 
-## Learn More
+### 1. Create Google Cloud credentials
 
-To learn more about Next.js, take a look at the following resources:
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Create a new project (or use an existing one)
+3. Go to **APIs & Services > Library** and enable **Google Calendar API**
+4. Go to **APIs & Services > Credentials** and click **Create Credentials > OAuth 2.0 Client ID**
+5. Choose **Web application** as the type
+6. Add your authorized redirect URI:
+   - Local: `http://localhost:3000/api/auth/google/callback`
+   - Raspberry Pi: `http://raspberrypi.local:3000/api/auth/google/callback`
+   - Vercel: `https://your-app.vercel.app/api/auth/google/callback`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 2. Configure environment variables
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Copy `.env.example` to `.env.local` and fill in your credentials:
 
-## Deploy on Vercel
+```bash
+cp .env.example .env.local
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```
+GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=your-client-secret
+NEXT_PUBLIC_BASE_URL=http://localhost:3000
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### 3. Use it
+
+Click **Import from Google Calendar** in the task list. You'll be redirected to Google's consent screen, then back to the app with your events ready to import.
+
+## Deployment
+
+### Vercel
+
+Set the three environment variables (`GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `NEXT_PUBLIC_BASE_URL`) in your Vercel project settings. Update the authorized redirect URI in Google Cloud to match your Vercel URL.
+
+### Raspberry Pi
+
+Run `npm run build && npm start` on the Pi. Set `NEXT_PUBLIC_BASE_URL` to the Pi's local address (e.g. `http://raspberrypi.local:3000`).

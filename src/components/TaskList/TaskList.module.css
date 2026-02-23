@@ -1,0 +1,187 @@
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 380px;
+    gap: 1rem;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.heading {
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--secondary);
+}
+
+.clearBtn {
+    font-size: 0.75rem;
+    color: var(--secondary);
+    opacity: 0.7;
+    transition: opacity 0.15s;
+}
+.clearBtn:hover {
+    opacity: 1;
+    color: var(--danger);
+}
+
+.list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-height: 280px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.list::-webkit-scrollbar {
+    width: 4px;
+}
+.list::-webkit-scrollbar-track {
+    background: transparent;
+}
+.list::-webkit-scrollbar-thumb {
+    background: var(--secondary);
+    border-radius: 2px;
+}
+
+.task {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.65rem 0.85rem;
+    border-radius: 0.75rem;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+.task:hover {
+    background: rgba(255, 255, 255, 0.07);
+}
+.taskActive {
+    border-color: var(--primary);
+    background: rgba(56, 189, 248, 0.08);
+    box-shadow: 0 0 12px rgba(56, 189, 248, 0.1);
+}
+.taskCompleted {
+    opacity: 0.45;
+}
+.taskCompleted .taskName {
+    text-decoration: line-through;
+}
+
+.taskSource {
+    flex-shrink: 0;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--secondary);
+}
+.taskSourceGcal {
+    background: var(--success);
+}
+
+.taskInfo {
+    flex: 1;
+    min-width: 0;
+}
+
+.taskName {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--foreground);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.taskDuration {
+    font-size: 0.75rem;
+    color: var(--secondary);
+    margin-top: 1px;
+}
+
+.deleteBtn {
+    flex-shrink: 0;
+    color: var(--secondary);
+    opacity: 0;
+    transition: opacity 0.15s, color 0.15s;
+    padding: 2px;
+}
+.task:hover .deleteBtn {
+    opacity: 0.6;
+}
+.deleteBtn:hover {
+    opacity: 1 !important;
+    color: var(--danger);
+}
+
+.addForm {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.addInput {
+    flex: 1;
+    padding: 0.55rem 0.75rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--secondary);
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--foreground);
+    font-size: 0.85rem;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.15s;
+}
+.addInput::placeholder {
+    color: var(--secondary);
+}
+.addInput:focus {
+    border-color: var(--primary);
+}
+
+.addBtn {
+    padding: 0.55rem 0.85rem;
+    border-radius: 0.5rem;
+    background: var(--primary);
+    color: var(--background);
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: background 0.15s;
+}
+.addBtn:hover {
+    background: var(--primary-hover);
+}
+
+.importBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.55rem;
+    border-radius: 0.5rem;
+    border: 1px dashed var(--secondary);
+    color: var(--secondary);
+    font-size: 0.8rem;
+    transition: all 0.15s;
+}
+.importBtn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.empty {
+    text-align: center;
+    color: var(--secondary);
+    font-size: 0.85rem;
+    padding: 1.5rem 0;
+    opacity: 0.7;
+}
