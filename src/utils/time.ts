@@ -8,8 +8,3 @@ export const formatTime = (seconds: number): string => {
     }
     return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
 };
-
-export const formatMinutes = (seconds: number): string => {
-    const m = Math.round(seconds / 60);
-    return `${m} min`;
-};
