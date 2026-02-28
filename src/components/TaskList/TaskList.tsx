@@ -108,7 +108,7 @@ export const TaskList: React.FC<TaskListProps> = ({
 
             <button className={styles.importBtn} onClick={onImport}>
                 <Calendar size={14} />
-                Import from Google Calendar
+                Import Today from Google Calendar
             </button>
         </div>
     );
