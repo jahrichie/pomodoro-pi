@@ -6,23 +6,26 @@ import styles from './Controls.module.css';
 
 interface ControlsProps {
     isActive: boolean;
+    isAlarm?: boolean;
     onToggle: () => void;
     onReset: () => void;
 }
 
-export const Controls: React.FC<ControlsProps> = ({ isActive, onToggle, onReset }) => {
+export const Controls: React.FC<ControlsProps> = ({ isActive, isAlarm = false, onToggle, onReset }) => {
     return (
         <div className={styles.container}>
-            <button
-                className={`${styles.button} ${styles.primary}`}
-                onClick={onToggle}
-                aria-label={isActive ? 'Pause' : 'Start'}
-            >
-                {isActive ? <Pause size={32} /> : <Play size={32} fill="currentColor" />}
-            </button>
+            {!isAlarm && (
+                <button
+                    className={`${styles.button} ${styles.primary}`}
+                    onClick={onToggle}
+                    aria-label={isActive ? 'Pause' : 'Start'}
+                >
+                    {isActive ? <Pause size={32} /> : <Play size={32} fill="currentColor" />}
+                </button>
+            )}
 
             <button
-                className={`${styles.button} ${styles.secondary}`}
+                className={`${styles.button} ${isAlarm ? styles.resetAlarm : styles.secondary}`}
                 onClick={onReset}
                 aria-label="Reset"
             >

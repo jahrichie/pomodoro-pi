@@ -41,3 +41,28 @@
 .secondary:hover {
     background: #475569;
 }
+
+.resetAlarm {
+    width: 80px;
+    height: 80px;
+    background: #f87171;
+    color: #fff;
+    animation: resetPulse 1.5s ease-in-out infinite;
+    box-shadow: 0 0 20px rgba(248, 113, 113, 0.4);
+}
+
+.resetAlarm:hover {
+    background: #ef4444;
+    box-shadow: 0 0 30px rgba(248, 113, 113, 0.6);
+}
+
+@keyframes resetPulse {
+    0%, 100% {
+        box-shadow: 0 0 15px rgba(248, 113, 113, 0.4);
+        transform: scale(1);
+    }
+    50% {
+        box-shadow: 0 0 30px rgba(248, 113, 113, 0.7);
+        transform: scale(1.08);
+    }
+}

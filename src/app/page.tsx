@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import Link from 'next/link';
 import styles from './page.module.css';
 import { useTimer } from '@/hooks/useTimer';
@@ -11,11 +11,35 @@ import { PresetSelector } from '@/components/PresetSelector/PresetSelector';
 import { TaskList } from '@/components/TaskList/TaskList';
 import { ImportModal } from '@/components/ImportModal/ImportModal';
 
+function playAlarmChime(ctx: AudioContext) {
+  const frequencies = [587.33, 783.99, 659.25];
+  frequencies.forEach((freq, i) => {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0, ctx.currentTime + i * 0.15);
+    gain.gain.linearRampToValueAtTime(0.12, ctx.currentTime + i * 0.15 + 0.05);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.15 + 0.6);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(ctx.currentTime + i * 0.15);
+    osc.stop(ctx.currentTime + i * 0.15 + 0.6);
+  });
+}
+
+function triggerVibration() {
+  if (typeof navigator !== 'undefined' && navigator.vibrate) {
+    navigator.vibrate([150, 80, 150, 80, 200]);
+  }
+}
+
 export default function Home() {
-  const { timeLeft, isActive, duration, start, pause, reset, setTime } = useTimer();
+  const { timeLeft, isActive, isAlarm, duration, start, pause, reset, setTime } = useTimer();
   const taskList = useTaskList();
   const prevTimeLeft = useRef(timeLeft);
   const [showImportModal, setShowImportModal] = useState(false);
+  const audioCtxRef = useRef<AudioContext | null>(null);
+  const alarmIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -31,6 +55,41 @@ export default function Home() {
     }
     prevTimeLeft.current = timeLeft;
   }, [timeLeft, taskList.activeTaskId, taskList.completeTask]);
+
+  const stopAlarmEffects = useCallback(() => {
+    if (alarmIntervalRef.current) {
+      clearInterval(alarmIntervalRef.current);
+      alarmIntervalRef.current = null;
+    }
+    if (audioCtxRef.current) {
+      audioCtxRef.current.close();
+      audioCtxRef.current = null;
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isAlarm) {
+      const ctx = new AudioContext();
+      audioCtxRef.current = ctx;
+
+      playAlarmChime(ctx);
+      triggerVibration();
+
+      alarmIntervalRef.current = setInterval(() => {
+        playAlarmChime(ctx);
+        triggerVibration();
+      }, 3000);
+    } else {
+      stopAlarmEffects();
+    }
+
+    return stopAlarmEffects;
+  }, [isAlarm, stopAlarmEffects]);
+
+  const handleReset = useCallback(() => {
+    stopAlarmEffects();
+    reset();
+  }, [stopAlarmEffects, reset]);
 
   const handleSetTime = (newTime: number) => {
     setTime(newTime);
@@ -66,12 +125,13 @@ export default function Home() {
         <h1 className={styles.title}>Pomodoro Focus</h1>
 
         <div className={styles.timerSection}>
-          <div className={styles.dialWrapper}>
+          <div className={`${styles.dialWrapper} ${isAlarm ? styles.dialWrapperAlarm : ''}`}>
             <TimerDial
               timeLeft={timeLeft}
               duration={duration}
               onSetTime={handleSetTime}
-              isInteractive={!isActive}
+              isInteractive={!isActive && !isAlarm}
+              isAlarm={isAlarm}
             />
           </div>
 
@@ -83,8 +143,9 @@ export default function Home() {
 
             <Controls
               isActive={isActive}
+              isAlarm={isAlarm}
               onToggle={handleToggle}
-              onReset={reset}
+              onReset={handleReset}
             />
           </div>
         </div>

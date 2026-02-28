@@ -3,22 +3,23 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 export interface TimerState {
   timeLeft: number; // in seconds
   isActive: boolean;
+  isAlarm: boolean;
   duration: number; // total duration in seconds
 }
 
 export const useTimer = (initialDuration: number = 15 * 60) => {
   const [timeLeft, setTimeLeft] = useState(initialDuration);
   const [isActive, setIsActive] = useState(false);
+  const [isAlarm, setIsAlarm] = useState(false);
   const [duration, setDuration] = useState(initialDuration);
   
   const endTimeRef = useRef<number | null>(null);
   const rafRef = useRef<number | null>(null);
 
   const start = useCallback(() => {
-    if (isActive) return;
+    if (isActive || isAlarm) return;
     
     setIsActive(true);
-    // Calculate expected end time based on current timeLeft
     endTimeRef.current = Date.now() + timeLeft * 1000;
     
     const tick = () => {
@@ -30,6 +31,7 @@ export const useTimer = (initialDuration: number = 15 * 60) => {
       if (remaining <= 0) {
         setTimeLeft(0);
         setIsActive(false);
+        setIsAlarm(true);
         endTimeRef.current = null;
       } else {
         setTimeLeft(remaining);
@@ -38,7 +40,7 @@ export const useTimer = (initialDuration: number = 15 * 60) => {
     };
     
     rafRef.current = requestAnimationFrame(tick);
-  }, [isActive, timeLeft]);
+  }, [isActive, isAlarm, timeLeft]);
 
   const pause = useCallback(() => {
     if (!isActive) return;
@@ -53,16 +55,17 @@ export const useTimer = (initialDuration: number = 15 * 60) => {
 
   const reset = useCallback(() => {
     pause();
+    setIsAlarm(false);
     setTimeLeft(duration);
   }, [pause, duration]);
 
   const setTime = useCallback((newDuration: number) => {
     pause();
+    setIsAlarm(false);
     setDuration(newDuration);
     setTimeLeft(newDuration);
   }, [pause]);
 
-  // Cleanup on unmount
   useEffect(() => {
     return () => {
       if (rafRef.current) {
@@ -74,6 +77,7 @@ export const useTimer = (initialDuration: number = 15 * 60) => {
   return {
     timeLeft,
     isActive,
+    isAlarm,
     duration,
     start,
     pause,

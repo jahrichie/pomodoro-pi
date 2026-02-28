@@ -9,13 +9,15 @@ interface TimerDialProps {
     duration: number;
     onSetTime: (time: number) => void;
     isInteractive?: boolean;
+    isAlarm?: boolean;
 }
 
 export const TimerDial: React.FC<TimerDialProps> = ({
     timeLeft,
     duration,
     onSetTime,
-    isInteractive = true
+    isInteractive = true,
+    isAlarm = false
 }) => {
     const svgRef = useRef<SVGSVGElement>(null);
     const [isDragging, setIsDragging] = useState(false);
@@ -155,8 +157,16 @@ export const TimerDial: React.FC<TimerDialProps> = ({
         window.addEventListener('touchcancel', onEnd);
     };
 
+    const label = isDragging
+        ? 'SET TIME'
+        : isAlarm
+            ? "TIME'S UP"
+            : timeLeft > 0
+                ? 'REMAINING'
+                : 'DONE';
+
     return (
-        <div className={styles.container}>
+        <div className={`${styles.container} ${isAlarm ? styles.alarm : ''}`}>
             <svg
                 ref={svgRef}
                 className={styles.svg}
@@ -166,7 +176,7 @@ export const TimerDial: React.FC<TimerDialProps> = ({
             >
                 {/* Background Track */}
                 <circle
-                    className={styles.track}
+                    className={`${styles.track} ${isAlarm ? styles.trackAlarm : ''}`}
                     cx={center}
                     cy={center}
                     r={radius}
@@ -174,16 +184,16 @@ export const TimerDial: React.FC<TimerDialProps> = ({
 
                 {/* Progress Arc */}
                 <circle
-                    className={styles.progress}
+                    className={`${styles.progress} ${isAlarm ? styles.progressAlarm : ''}`}
                     cx={center}
                     cy={center}
                     r={radius}
                     strokeDasharray={circumference}
-                    strokeDashoffset={strokeDashoffset}
+                    strokeDashoffset={isAlarm ? 0 : strokeDashoffset}
                 />
 
                 {/* Interactive Knob */}
-                {isInteractive && (
+                {isInteractive && !isAlarm && (
                     <circle
                         className={styles.knob}
                         cx={center + radius * Math.cos(effectiveAngle * (Math.PI / 180))}
@@ -194,8 +204,12 @@ export const TimerDial: React.FC<TimerDialProps> = ({
             </svg>
 
             <div className={styles.timeDisplay}>
-                <div className={styles.timeText}>{formatTime(timeLeft)}</div>
-                <div className={styles.label}>{isDragging ? 'SET TIME' : (timeLeft > 0 ? 'REMAINING' : 'DONE')}</div>
+                <div className={`${styles.timeText} ${isAlarm ? styles.timeTextAlarm : ''}`}>
+                    {formatTime(timeLeft)}
+                </div>
+                <div className={`${styles.label} ${isAlarm ? styles.labelAlarm : ''}`}>
+                    {label}
+                </div>
             </div>
         </div>
     );

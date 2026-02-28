@@ -43,6 +43,26 @@
     0 0 0 1px rgba(255, 255, 255, 0.05),
     0 20px 50px -20px rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(10px);
+  transition: box-shadow 0.3s ease;
+}
+
+.dialWrapperAlarm {
+  animation: wrapperGlow 1.5s ease-in-out infinite;
+}
+
+@keyframes wrapperGlow {
+  0%, 100% {
+    box-shadow:
+      0 0 0 1px rgba(248, 113, 113, 0.15),
+      0 0 30px rgba(248, 113, 113, 0.15),
+      0 20px 50px -20px rgba(0, 0, 0, 0.5);
+  }
+  50% {
+    box-shadow:
+      0 0 0 1px rgba(248, 113, 113, 0.3),
+      0 0 60px rgba(248, 113, 113, 0.3),
+      0 20px 50px -20px rgba(0, 0, 0, 0.5);
+  }
 }
 
 .controlsWrapper {
