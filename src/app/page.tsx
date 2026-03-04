@@ -124,9 +124,9 @@ export default function Home() {
       <div className={styles.container}>
         <h1 className={styles.title}>Pomodoro Focus</h1>
         <p className={styles.subtitle}>
-          Pomofocus is a customizable pomodoro timer that works on desktop &amp; mobile browser.
+          Pomofocus is a customizable pomodoro timer that works on any device.
           The aim of this app is to help you focus on any task you are working on.
-          You can also import timers from your google calendar.
+          You can also import timers from your google calendar. Get stuff done!
         </p>
 
         <div className={styles.timerSection}>
