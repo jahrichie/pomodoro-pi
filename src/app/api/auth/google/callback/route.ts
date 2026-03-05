@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
   try {
     const oauth2Client = getOAuth2Client();
     const { tokens } = await oauth2Client.getToken(code);
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
 
     const response = NextResponse.redirect(`${baseUrl}/?import=1`);
 

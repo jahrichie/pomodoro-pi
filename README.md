@@ -38,7 +38,7 @@ cp .env.example .env.local
 ```
 GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
 GOOGLE_CLIENT_SECRET=your-client-secret
-NEXT_PUBLIC_BASE_URL=http://localhost:3000
+BASE_URL=http://localhost:3000
 ```
 
 ### 3. Use it
@@ -49,8 +49,8 @@ Click **Import from Google Calendar** in the task list. You'll be redirected to 
 
 ### Vercel
 
-Set the three environment variables (`GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `NEXT_PUBLIC_BASE_URL`) in your Vercel project settings. Update the authorized redirect URI in Google Cloud to match your Vercel URL.
+Set the three environment variables (`GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `BASE_URL`) in your Vercel project settings. Update the authorized redirect URI in Google Cloud to match your Vercel URL.
 
 ### Raspberry Pi
 
-Run `npm run build && npm start` on the Pi. Set `NEXT_PUBLIC_BASE_URL` to the Pi's local address (e.g. `http://raspberrypi.local:3000`).
+Run `npm run build && npm start` on the Pi. Set `BASE_URL` to the Pi's local address (e.g. `http://raspberrypi.local:3000`).
