@@ -110,6 +110,12 @@ export const TaskList: React.FC<TaskListProps> = ({
                 <Calendar size={14} />
                 Import Today from Google Calendar
             </button>
+
+            <p className={styles.helperText}>
+                Pomofocus is a customizable pomodoro timer that works on any device.
+                The aim of this app is to help you focus on any task you are working on.
+                You can also import timers from your google calendar. Get stuff done!
+            </p>
         </div>
     );
 };
