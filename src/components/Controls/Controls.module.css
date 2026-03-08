@@ -66,3 +66,41 @@
         transform: scale(1.08);
     }
 }
+
+.primaryBreak {
+    width: 80px;
+    height: 80px;
+    background: #10b981;
+    color: #fff;
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+}
+
+.primaryBreak:hover {
+    background: #059669;
+    box-shadow: 0 0 30px rgba(16, 185, 129, 0.6);
+}
+
+.startBreak {
+    width: 80px;
+    height: 80px;
+    background: #10b981;
+    color: #fff;
+    animation: breakPulse 1.5s ease-in-out infinite;
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+}
+
+.startBreak:hover {
+    background: #059669;
+    box-shadow: 0 0 30px rgba(16, 185, 129, 0.6);
+}
+
+@keyframes breakPulse {
+    0%, 100% {
+        box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+        transform: scale(1);
+    }
+    50% {
+        box-shadow: 0 0 30px rgba(16, 185, 129, 0.7);
+        transform: scale(1.08);
+    }
+}

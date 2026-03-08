@@ -8,6 +8,7 @@ import { useTaskList } from '@/hooks/useTaskList';
 import { TimerDial } from '@/components/TimerDial/TimerDial';
 import { Controls } from '@/components/Controls/Controls';
 import { PresetSelector } from '@/components/PresetSelector/PresetSelector';
+import { BreakSelector } from '@/components/BreakSelector/BreakSelector';
 import { TaskList } from '@/components/TaskList/TaskList';
 import { ImportModal } from '@/components/ImportModal/ImportModal';
 
@@ -34,10 +35,11 @@ function triggerVibration() {
 }
 
 export default function Home() {
-  const { timeLeft, isActive, isAlarm, duration, start, pause, reset, setTime } = useTimer();
+  const { timeLeft, isActive, isAlarm, isBreak, duration, start, pause, reset, setTime, startBreak } = useTimer();
   const taskList = useTaskList();
   const prevTimeLeft = useRef(timeLeft);
   const [showImportModal, setShowImportModal] = useState(false);
+  const [breakDuration, setBreakDuration] = useState(5 * 60);
   const audioCtxRef = useRef<AudioContext | null>(null);
   const alarmIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -50,11 +52,11 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    if (prevTimeLeft.current > 0 && timeLeft === 0 && taskList.activeTaskId) {
+    if (prevTimeLeft.current > 0 && timeLeft === 0 && taskList.activeTaskId && !isBreak) {
       taskList.completeTask(taskList.activeTaskId);
     }
     prevTimeLeft.current = timeLeft;
-  }, [timeLeft, taskList.activeTaskId, taskList.completeTask]);
+  }, [timeLeft, taskList.activeTaskId, taskList.completeTask, isBreak]);
 
   const stopAlarmEffects = useCallback(() => {
     if (alarmIntervalRef.current) {
@@ -91,6 +93,11 @@ export default function Home() {
     reset();
   }, [stopAlarmEffects, reset]);
 
+  const handleStartBreak = useCallback(() => {
+    stopAlarmEffects();
+    startBreak(breakDuration);
+  }, [stopAlarmEffects, startBreak, breakDuration]);
+
   const handleSetTime = (newTime: number) => {
     setTime(newTime);
   };
@@ -119,33 +126,47 @@ export default function Home() {
     taskList.importTasks(items);
   };
 
+  const dialWrapperClass = [
+    styles.dialWrapper,
+    isAlarm ? styles.dialWrapperAlarm : '',
+    isBreak && !isAlarm ? styles.dialWrapperBreak : '',
+  ].filter(Boolean).join(' ');
+
   return (
     <main className={styles.main}>
       <div className={styles.container}>
         <h1 className={styles.title}>Pomodoro Focus</h1>
 
         <div className={styles.timerSection}>
-          <div className={`${styles.dialWrapper} ${isAlarm ? styles.dialWrapperAlarm : ''}`}>
+          <div className={dialWrapperClass}>
             <TimerDial
               timeLeft={timeLeft}
               duration={duration}
               onSetTime={handleSetTime}
               isInteractive={!isActive && !isAlarm}
               isAlarm={isAlarm}
+              isBreak={isBreak}
             />
           </div>
 
           <div className={styles.controlsWrapper}>
             <PresetSelector
               onSelect={handleSetTime}
-              currentDuration={duration}
+              currentDuration={!isBreak ? duration : -1}
+            />
+
+            <BreakSelector
+              onSelect={setBreakDuration}
+              currentBreakDuration={breakDuration}
             />
 
             <Controls
               isActive={isActive}
               isAlarm={isAlarm}
+              isBreak={isBreak}
               onToggle={handleToggle}
               onReset={handleReset}
+              onStartBreak={handleStartBreak}
             />
           </div>
         </div>

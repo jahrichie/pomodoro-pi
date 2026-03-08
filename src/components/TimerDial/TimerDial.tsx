@@ -10,6 +10,7 @@ interface TimerDialProps {
     onSetTime: (time: number) => void;
     isInteractive?: boolean;
     isAlarm?: boolean;
+    isBreak?: boolean;
 }
 
 export const TimerDial: React.FC<TimerDialProps> = ({
@@ -17,7 +18,8 @@ export const TimerDial: React.FC<TimerDialProps> = ({
     duration,
     onSetTime,
     isInteractive = true,
-    isAlarm = false
+    isAlarm = false,
+    isBreak = false,
 }) => {
     const svgRef = useRef<SVGSVGElement>(null);
     const [isDragging, setIsDragging] = useState(false);
@@ -159,11 +161,15 @@ export const TimerDial: React.FC<TimerDialProps> = ({
 
     const label = isDragging
         ? 'SET TIME'
-        : isAlarm
-            ? "TIME'S UP"
-            : timeLeft > 0
-                ? 'REMAINING'
-                : 'DONE';
+        : isAlarm && isBreak
+            ? 'BREAK DONE'
+            : isAlarm
+                ? "TIME'S UP"
+                : isBreak
+                    ? 'BREAK'
+                    : timeLeft > 0
+                        ? 'REMAINING'
+                        : 'DONE';
 
     return (
         <div className={`${styles.container} ${isAlarm ? styles.alarm : ''}`}>

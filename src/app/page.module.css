@@ -60,6 +60,25 @@
   animation: wrapperGlow 1.5s ease-in-out infinite;
 }
 
+.dialWrapperBreak {
+  animation: wrapperBreakGlow 2s ease-in-out infinite;
+}
+
+@keyframes wrapperBreakGlow {
+  0%, 100% {
+    box-shadow:
+      0 0 0 1px rgba(52, 211, 153, 0.15),
+      0 0 30px rgba(52, 211, 153, 0.15),
+      0 20px 50px -20px rgba(0, 0, 0, 0.5);
+  }
+  50% {
+    box-shadow:
+      0 0 0 1px rgba(52, 211, 153, 0.3),
+      0 0 60px rgba(52, 211, 153, 0.3),
+      0 20px 50px -20px rgba(0, 0, 0, 0.5);
+  }
+}
+
 @keyframes wrapperGlow {
   0%, 100% {
     box-shadow:
