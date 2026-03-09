@@ -13,6 +13,7 @@ const PRESETS = [15, 30, 60];
 export const PresetSelector: React.FC<PresetSelectorProps> = ({ onSelect, currentDuration }) => {
     return (
         <div className={styles.container}>
+            <span className={styles.label}>Task</span>
             {PRESETS.map((mins) => (
                 <button
                     key={mins}

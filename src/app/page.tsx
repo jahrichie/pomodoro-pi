@@ -169,19 +169,19 @@ export default function Home() {
               onStartBreak={handleStartBreak}
             />
           </div>
-        </div>
 
-        <div className={styles.taskSection}>
-          <TaskList
-            tasks={taskList.tasks}
-            activeTaskId={taskList.activeTaskId}
-            currentDuration={duration}
-            onSelect={handleSelectTask}
-            onAdd={taskList.addTask}
-            onRemove={taskList.removeTask}
-            onClearCompleted={taskList.clearCompleted}
-            onImport={handleImport}
-          />
+          <div className={styles.taskSection}>
+            <TaskList
+              tasks={taskList.tasks}
+              activeTaskId={taskList.activeTaskId}
+              currentDuration={duration}
+              onSelect={handleSelectTask}
+              onAdd={taskList.addTask}
+              onRemove={taskList.removeTask}
+              onClearCompleted={taskList.clearCompleted}
+              onImport={handleImport}
+            />
+          </div>
         </div>
       </div>
 
