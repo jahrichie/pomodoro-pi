@@ -188,7 +188,7 @@ export default function Home() {
       <footer className={styles.footer}>
         <Link href="/privacy">Privacy Policy</Link>
         <span className={styles.footerDot}>&middot;</span>
-        <Link href="/terms">Terms of Service</Link>
+        <Link href="/terms">Terms</Link>
       </footer>
 
       {showImportModal && (
