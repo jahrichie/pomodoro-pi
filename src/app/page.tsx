@@ -186,9 +186,25 @@ export default function Home() {
       </div>
 
       <footer className={styles.footer}>
-        <Link href="/privacy">Privacy Policy</Link>
-        <span className={styles.footerDot}>&middot;</span>
-        <Link href="/terms">Terms of Service</Link>
+        <div className={styles.footerLinks}>
+          <Link href="/privacy">Privacy Policy</Link>
+          <span className={styles.footerDot}>&middot;</span>
+          <Link href="/terms">Terms of Service</Link>
+        </div>
+        <a
+          href="#"
+          title="Coming Soon"
+          className={styles.appStoreLink}
+          onClick={(e) => e.preventDefault()}
+          aria-label="Download on the Mac App Store - Coming Soon"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/mac-app-store-badge.svg"
+            alt="Download on the Mac App Store"
+            className={styles.appStoreBadge}
+          />
+        </a>
       </footer>
 
       {showImportModal && (
