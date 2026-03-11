@@ -186,10 +186,11 @@ export default function Home() {
       </div>
 
       <footer className={styles.footer}>
-        <Link href="/privacy">Privacy Policy</Link>
-        <span className={styles.footerDot}>&middot;</span>
-        <Link href="/terms">Terms of Service</Link>
-        <span className={styles.footerDot}>&middot;</span>
+        <div className={styles.footerLinks}>
+          <Link href="/privacy">Privacy Policy</Link>
+          <span className={styles.footerDot}>&middot;</span>
+          <Link href="/terms">Terms of Service</Link>
+        </div>
         <a
           href="#"
           title="Coming Soon"
