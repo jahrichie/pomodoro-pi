@@ -140,3 +140,19 @@
 .footerDot {
   color: rgba(255, 255, 255, 0.25);
 }
+
+.appStoreLink {
+  display: inline-flex;
+  align-items: center;
+  color: rgba(255, 255, 255, 0.4);
+  transition: color 0.15s;
+  cursor: default;
+}
+.appStoreLink:hover {
+  color: #fff;
+}
+
+.appStoreIcon {
+  width: 1rem;
+  height: 1rem;
+}
