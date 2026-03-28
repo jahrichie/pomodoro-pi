@@ -13,8 +13,20 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Pomodoro Timer",
-  description: "Touchscreen Pomodoro Timer for Raspberry Pi",
+  title: "Pomodoro Pi",
+  description: "A touchscreen Pomodoro timer built for Raspberry Pi. Import tasks from Google Calendar, manage your queue, and stay focused — one session at a time.",
+  openGraph: {
+    title: "Pomodoro Pi",
+    description: "A touchscreen Pomodoro timer built for Raspberry Pi. Import tasks from Google Calendar, manage your queue, and stay focused — one session at a time.",
+    type: "website",
+    images: [{ url: "/og.png" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Pomodoro Pi",
+    description: "A touchscreen Pomodoro timer built for Raspberry Pi. Import tasks from Google Calendar, manage your queue, and stay focused — one session at a time.",
+    images: ["/og.png"],
+  },
 };
 
 export default function RootLayout({
