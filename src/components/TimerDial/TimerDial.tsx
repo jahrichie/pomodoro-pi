@@ -50,7 +50,8 @@ export const TimerDial: React.FC<TimerDialProps> = ({
     const effectiveAngle = (rawAngle === 0 && (isDragging ? totalRotationRef.current > 0 : timeLeft > 0))
         ? 360
         : rawAngle;
-    const visualProgress = effectiveAngle / 360;
+    const isOverfull = isDragging ? totalRotationRef.current > 360 : timeLeft > 3600;
+    const visualProgress = isOverfull ? 1 : effectiveAngle / 360;
     const strokeDashoffset = circumference - visualProgress * circumference;
 
     const getAngleFromPointer = useCallback((clientX: number, clientY: number): number => {
